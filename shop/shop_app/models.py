@@ -49,9 +49,20 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
     book_id = models.ForeignKey(Book, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=0, null=True, blank=True)
 
     @property
     def get_total(self):
         total = self.book_id.price * self.quantity
         return total
+
+
+class DeliveryAddress(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    address = models.CharField(max_length=250, null=False)
+    city = models.CharField(max_length=250, null=False)
+    country = models.CharField(max_length=250, null=False)
+
+    def __str__(self):
+        return self.address

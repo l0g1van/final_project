@@ -24,10 +24,13 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', views.home_page, name='home'),
     path('register/', views.RegisterView.as_view(), name='register'),
-    path('profile/<int:pk>', views.profile_view, name='profile_page'),
+    # path('profile/<int:pk>', views.profile_view, name='profile_page'),
     path('log_out', views.logout_view, name='logout'),
     path('cart/', views.cart, name='cart'),
-    path('checkout/', views.checkout, name='checkout')
+    path('checkout/', views.checkout, name='checkout'),
+
+    path('update_item/', views.updateItem, name="update_item"),
+    path('proces_order/', views.process_order, name='process_order')
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

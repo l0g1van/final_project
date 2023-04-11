@@ -7,17 +7,16 @@ networks:
 services:
   db:
     image: postgres:15
-    container_name: postgres
     volumes:
       - ~/.pg/pg_data/yt:/var/lib/postgresql/data
     networks:
       - app_net
     env_file:
-      - .env
+      - config/nginx/.env
   app:
     build:
       context: .
-      dockerfile: Dockerfile.shop
+      dockerfile: docker/shop/Dockerfile
 #    image: shop:latest
     ports:
       - '8000:8000'
@@ -30,7 +29,7 @@ services:
     environment:
       DATABASE_PORT: '5432'
     env_file:
-      - .env
+      - config/nginx/.env
     command: >
       bash -c "python3 manage.py migrate && python3 manage.py runserver"
 #      - celery
@@ -43,7 +42,7 @@ services:
 #  api:
 #    build:
 #        context: .
-#        dockerfile: store/Dockerfile.api
+#        dockerfile: store/Dockerfile
 #    ports:
 #      - '8001:8001'
 #    volumes:

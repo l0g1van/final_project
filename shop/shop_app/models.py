@@ -28,7 +28,6 @@ class Order(models.Model):
         ('success', 'success'),
         ('fail', 'fail')
     ), default='in_work')
-    delivery_address = models.CharField(max_length=250)
 
     def __str__(self):
         return str(self.pk)

@@ -1,5 +1,6 @@
 import json
 
+import requests
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -133,6 +134,18 @@ def process_order(request):
             book = order_item.book_id
             book.quantity -= order_item.quantity
             book.save()
+            data_for_api_order_item = {
+                'order_id': order.pk,
+                'book_store_id': book.title,
+                'quantity': order_item.quantity
+            }
+            data_for_api_book = {
+                'book_title': book.title,
+                'book_quantity': book.quantity
+            }
+            # print(order.pk)
+            requests.post('http://127.0.0.1:8001/books/', data=data_for_api_book)
+            requests.post('http://127.0.0.1:8001/order_item/', data=data_for_api_order_item)
 
     DeliveryAddress.objects.create(
         user_id=customer,
@@ -141,4 +154,11 @@ def process_order(request):
         city=data['delivery']['city'],
         country=data['delivery']['country']
     )
+    data_for_api_delivery_address = {
+        'order_id': order.pk,
+        'address': data['delivery']['address'],
+        'city': data['delivery']['city'],
+        'country': data['delivery']['country']
+    }
+    requests.post('http://127.0.0.1:8001/delivery_address/', data=data_for_api_delivery_address)
     return JsonResponse('Item was added', safe=False)

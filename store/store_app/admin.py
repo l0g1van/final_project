@@ -1,6 +1,9 @@
 from django.contrib import admin
 
-from .models import Book, Order, OrderItem, OrderItemBookItem
+from .models import Book, Order, OrderItem, DeliveryAddress
+
+admin.site.register(OrderItem)
+admin.site.register(DeliveryAddress)
 
 
 @admin.register(Book)
@@ -16,7 +19,7 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['user_email', 'status']
+    list_display = ['status']
     list_filter = ['status']
 
 

@@ -1,31 +1,35 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class Book(models.Model):
     title = models.CharField(max_length=230)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class BookItem(models.Model):
-    book_id = models.OneToOneField(Book, on_delete=models.CASCADE)
+    image = models.ImageField(null=True, blank=True)
+    quantity = models.IntegerField(default=0)
 
 
 class Order(models.Model):
-    user_email = models.EmailField()
+    # user_email = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=(
         ('in_work', 'in_work'),
         ('success', 'success'),
         ('fail', 'fail')
     ), default='in_work')
-    delivery_address = models.CharField(max_length=250)
+    # delivery_address = models.CharField(max_length=250)
 
 
 class OrderItem(models.Model):
-    order_id = models.OneToOneField(Order, on_delete=models.CASCADE)
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
     book_store_id = models.ForeignKey(Book, on_delete=models.CASCADE)
     quantity = models.IntegerField()
 
 
-class OrderItemBookItem(models.Model):
-    order_item_id = models.OneToOneField(OrderItem, on_delete=models.CASCADE)
-    book_item_id = models.OneToOneField(BookItem, on_delete=models.CASCADE)
+class DeliveryAddress(models.Model):
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    address = models.CharField(max_length=250, null=False)
+    city = models.CharField(max_length=250, null=False)
+    country = models.CharField(max_length=250, null=False)
+
+    def __str__(self):
+        return self.address

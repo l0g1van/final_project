@@ -3,19 +3,30 @@
 {% load cache %}
 {% block content %}
 
-<!--{#    <form method="GET" action="{% url 'home' %}">#}-->
-<!--{##}-->
-<!--{#        <label for="price">Price:</label>#}-->
-<!--{#        <select name="price">#}-->
-<!--{#            <option value="">All</option>#}-->
-<!--{#            <option value="0-20">$0 - $20</option>#}-->
-<!--{#            <option value="20-50">$20 - $50</option>#}-->
-<!--{#            <option value="50-100">$50 - $100</option>#}-->
-<!--{#        </select>#}-->
-<!--{##}-->
-<!--{#        <button type="submit">Filter</button>#}-->
-<!--{#    </form>#}-->
+    <div class="card mb-4">
+        <h6 class="header"> Price </h6>
+        <div class="list-group list-group-flush">
+            <li class="list-group-item">
+                <input type="range" min="{{ min_max_price.price__min }}" id="rangeInput" max="{{ min_max_price.price__max }}" oninput="maxPrice.value=this.value">
+            </li>
+            <li class="list-group-item">
+                Max:<br/>
+                <input type="number" onkeyup="rangeInput.value=this.value" id="maxPrice" min="{{ min_max_price.price__min }}" max="{{ min_max_price.price__max }}">
+                <br/>
+                <button id="priceFilterBtn" onclick="Filter()" type="filter" class="btn btn-info btn-sm mt-2"> Filter </button>
+                <script>
+                    function Filter() {
+                        console.log('Filter button clicked')
+                        let maxPrice = $('#maxPrice').val();
+                        window.location.href = '{% url "home" %}?max_price=' + maxPrice;
+                    }
+                </script>
+
+            </li>
+        </div>
+    </div>
     <div class="row">
+
         {% for book in books %}
             <div class="col-lg-4">
                     <img class=thumbnail src="{{ book.image_url }}" alt="{{ book.title }}">

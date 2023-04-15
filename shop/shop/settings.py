@@ -156,4 +156,9 @@ CELERY_CACHE_BACKEND = 'default'
 CELERY_IMPORTS = ('shop_app.tasks',)
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CELERY_TIMEZONE = TIME_ZONE
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+

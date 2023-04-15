@@ -5,6 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.cache import cache
+from django.db.models import Max, Min
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views import generic
@@ -12,11 +13,7 @@ from django.urls import reverse_lazy
 
 from .forms import RegisterForm
 from .models import Book, Order, OrderItem, DeliveryAddress
-
-
-# class HomePageView(generic.ListView):
-#     model = Book
-#     template_name = 'home_page.html'
+from .tasks import send_mail_order_created
 
 
 class RegisterView(generic.CreateView):
@@ -25,21 +22,15 @@ class RegisterView(generic.CreateView):
     success_url = reverse_lazy('login')
 
 
-# @login_required(login_url='/login/')
-# def profile_view(request, pk):
-#     profile = User.objects.get(id=pk)
-#     return render(request, 'profile.html', {'profile': profile})
-
-
 def logout_view(request):
     logout(request)
     return redirect('home')
 
 
-# @login_required(login_url='/login/')
 def home_page(request):
     # price = request.GET.get('price')
-    books = Book.objects.all()
+    # books = Book.objects.all()
+    min_max_price = Book.objects.aggregate(Min('price'), Max('price'))
 
     if request.user.is_authenticated:
         customer = request.user
@@ -54,7 +45,13 @@ def home_page(request):
     #     min_price = price_range[0]
     #     max_price = price_range[1]
     #     books = books.filter(price__gte=min_price, price__lte=max_price)
-    context = {'cart_items': cart_items, 'books': books}
+
+    max_price = request.GET.get('max_price')
+    if max_price:
+        books = Book.objects.filter(price__lte=max_price)
+    else:
+        books = Book.objects.all()
+    context = {'cart_items': cart_items, 'books': books, 'min_max_price': min_max_price}
 
     return render(request, 'home_page.html', context=context)
 
@@ -128,6 +125,7 @@ def process_order(request):
     order, created = Order.objects.get_or_create(user_id=customer, status='in_work')
     order.status = 'ordered'
     order.save()
+    books = {}
 
     for order_item in order.orderitem_set.all():
         if order.status == 'ordered':
@@ -139,6 +137,7 @@ def process_order(request):
                 'book_store_id': book.title,
                 'quantity': order_item.quantity
             }
+            books[f'{book.title}'] = order_item.quantity
             data_for_api_book = {
                 'book_title': book.title,
                 'book_quantity': book.quantity
@@ -159,6 +158,7 @@ def process_order(request):
         'city': data['delivery']['city'],
         'country': data['delivery']['country']
     }
+    send_mail_order_created(user_email=customer.email, user_order=order.pk, books=books)
     requests.post('http://127.0.0.1:8001/delivery_address/', data=data_for_api_delivery_address)
     # return JsonResponse('Item was added', safe=False)
     return redirect('home')

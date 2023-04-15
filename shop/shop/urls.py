@@ -24,7 +24,6 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', views.home_page, name='home'),
     path('register/', views.RegisterView.as_view(), name='register'),
-    # path('profile/<int:pk>', views.profile_view, name='profile_page'),
     path('log_out', views.logout_view, name='logout'),
     path('cart/', views.cart, name='cart'),
     path('checkout/', views.checkout, name='checkout'),

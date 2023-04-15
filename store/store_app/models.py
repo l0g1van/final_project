@@ -8,6 +8,14 @@ class Book(models.Model):
     image = models.ImageField(null=True, blank=True)
     quantity = models.IntegerField(default=0)
 
+    @property
+    def image_url(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
+
 
 class Order(models.Model):
     # user_email = models.ForeignKey(User, on_delete=models.CASCADE)

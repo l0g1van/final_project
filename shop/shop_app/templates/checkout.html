@@ -84,8 +84,14 @@
                 },
                 body: JSON.stringify({'form': userFormData, 'delivery': deliveryInfo})
             })
-
+                .then((data) => {
+                    window.location.href='{% url "home" %}'
+                })
         }
+
     </script>
+<!--    <script type="text/javascript">-->
+<!--        // location.reload()-->
+<!--    </script>-->
 
 {% endblock content %}

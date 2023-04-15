@@ -8,7 +8,7 @@ RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ../../store/store /app/
+COPY /store /app/
 
 ENV DJANGO_SETTINGS_MODULE=store.settings
 ENV SECRET_KEY=mysecretkey

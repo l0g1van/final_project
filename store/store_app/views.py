@@ -7,24 +7,35 @@ from .permissions import IsAdminOrReadOnly
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    # def update(self, request, *args, **kwargs):
-    #     isinstance_ = self.get_object()
+    # def partial_update(self, request, *args, **kwargs):
+    #     instance = self.get_object()
     #     book = Book.objects.get(title=request.data['book_title'])
-    #     serializer = self.get_serializer(isinstance_, data={
+    #     serializer = self.get_serializer(instance, data={
     #         'title': book.title,
     #         'price': book.price,
-    #         'image': book.image,
-    #         'quantity': request.data['book_quantity']
-    #     }, partial=kwargs.pop('partial', False))
-    #     print(book.title, book.image, book.price, request.data['book_quantity'])
-    #     serializer.is_valid()
+    #         'quantity': request.data['book_quantity'],
+    #         'image': book.image
+    #     }, partial=True)
+    #     serializer.is_valid(raise_exception=True)
     #     self.perform_update(serializer)
-    #     return response.Response(serializer.data)
-    #
-    # def perform_update(self, serializer):
-    #     serializer.save()
+    #     return response.Response(serializer.data, status=status.HTTP_200_OK)
+
+    def update(self, request, *args, **kwargs):
+        isinstance_ = self.get_object()
+        book = Book.objects.get(title=request.data['book_title'])
+        serializer = self.get_serializer(isinstance_, data={
+            'title': book.title,
+            'price': book.price,
+            'image': book.image,
+            'quantity': request.data['book_quantity']
+        }, partial=False)
+        serializer.is_valid()
+        self.perform_update(serializer)
+        return response.Response(serializer.data)
 
 
 class OrderViewSet(viewsets.ModelViewSet):

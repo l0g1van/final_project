@@ -143,8 +143,7 @@ def process_order(request):
                 'book_title': book.title,
                 'book_quantity': book.quantity
             }
-            # print(order.pk)
-            requests.post('http://127.0.0.1:8001/books/', data=data_for_api_book)
+            requests.patch('http://127.0.0.1:8001/books/10/', data=data_for_api_book)
             requests.post('http://127.0.0.1:8001/order_item/', data=data_for_api_order_item)
 
     DeliveryAddress.objects.create(
@@ -161,4 +160,5 @@ def process_order(request):
         'country': data['delivery']['country']
     }
     requests.post('http://127.0.0.1:8001/delivery_address/', data=data_for_api_delivery_address)
-    return JsonResponse('Item was added', safe=False)
+    # return JsonResponse('Item was added', safe=False)
+    return redirect('home')

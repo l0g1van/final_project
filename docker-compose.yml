@@ -9,29 +9,40 @@ services:
     image: postgres:15
     volumes:
       - ~/.pg/pg_data/yt:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=shop_db
+      - POSTGRES_USER=shop_user
+      - POSTGRES_PASSWORD=mypassword
     networks:
       - app_net
     env_file:
       - config/nginx/.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "shop_user", "-d", "shop_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   app:
     build:
       context: .
       dockerfile: docker/shop/Dockerfile
 #    image: shop:latest
+    environment:
+      - DB_HOST=localhost
+      - DB_PORT=5432
+    command: sh -c "./waitforcommand.sh db:5432 -- echo 'Database is ready!' && ./start.sh"
+    env_file:
+      - config/nginx/.env
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - '8000:8000'
     volumes:
       - .:/app
     networks:
       - app_net
-    depends_on:
-      - db
-    environment:
-      DATABASE_PORT: '5432'
-    env_file:
-      - config/nginx/.env
-    command: >
-      bash -c "python3 manage.py migrate && python3 manage.py runserver"
+#    command-c "python3 manage.py migrate && python3 manage.py runserver"
 #      - celery
 #    environment:
 #      - DJANGO_SETTINGS_MODULE=shop.shop.settings

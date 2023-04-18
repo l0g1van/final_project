@@ -126,7 +126,6 @@ def process_order(request):
     order.status = 'ordered'
     order.save()
     books = {}
-
     for order_item in order.orderitem_set.all():
         if order.status == 'ordered':
             book = order_item.book_id
@@ -142,7 +141,7 @@ def process_order(request):
                 'book_title': book.title,
                 'book_quantity': book.quantity
             }
-            requests.patch('http://127.0.0.1:8001/books/10/', data=data_for_api_book)
+            requests.patch(f'http://127.0.0.1:8001/books/{book.pk}/', data=data_for_api_book)
             requests.post('http://127.0.0.1:8001/order_item/', data=data_for_api_order_item)
 
     DeliveryAddress.objects.create(
@@ -160,5 +159,4 @@ def process_order(request):
     }
     send_mail_order_created(user_email=customer.email, user_order=order.pk, books=books)
     requests.post('http://127.0.0.1:8001/delivery_address/', data=data_for_api_delivery_address)
-    # return JsonResponse('Item was added', safe=False)
     return redirect('home')

@@ -1,19 +1,34 @@
-FROM python:3.10-alpine as python-base
+FROM python:3.11-slim as python-base
 
-WORKDIR /app
+RUN apt-get update --fix-missing && apt-get upgrade -qy
 
-COPY ../../store/requirements.txt /app/
+RUN apt update && apt install curl -y
 
-RUN apk add --no-cache postgresql-dev gcc python3-dev musl-dev
+FROM python-base as python-compile
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./store/requirements.txt .
 
-COPY /store /app/
+RUN pip install --no-cache-dir -t /python -r requirements.txt
 
-ENV DJANGO_SETTINGS_MODULE=store.settings
-ENV SECRET_KEY=mysecretkey
+FROM python-base as hillel_example
 
-EXPOSE 8000
+ENV PYTHONFAULTHANDLER=1
+ENV PYTHONUNBUFFERED=1
 
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8001"]
+COPY --from=python-compile /python /home/appuser/python
+ENV PYTHONPATH=/home/appuser/python
+ENV PATH="${PYTHONPATH}/bin:${PATH}"
 
+COPY ./store home/appuser/app
+COPY ./docker/store home/appuser/app/docker
+WORKDIR /home/appuser/app
+
+#RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-alpine-linux-amd64-v0.6.1.tar.gz && \
+#    tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-v0.6.1.tar.gz
+
+RUN chmod +x docker/runserver.sh docker/wait-for-command.sh docker/docker-entrypoint.sh
+
+EXPOSE 8001
+
+ENTRYPOINT ["/bin/bash", "/home/appuser/app/docker/docker-entrypoint.sh"]
+CMD ["python", "manage.py", "runserver"]

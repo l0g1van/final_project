@@ -6,7 +6,7 @@ class Book(models.Model):
     title = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(default='No_image_available.svg.png')
 
     def __str__(self):
         return self.title

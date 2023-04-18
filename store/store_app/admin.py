@@ -11,7 +11,9 @@ class BookAdmin(admin.ModelAdmin):
     list_display = ['title', 'price']
     fieldsets = [
         ('Title', {'fields': ['title']}),
-        ('Price', {'fields': ['price']})
+        ('Price', {'fields': ['price']}),
+        ('Quantity', {'fields': ['quantity']}),
+        ('Image', {'fields': ['image']})
     ]
     list_filter = ['price']
     search_fields = ['title']

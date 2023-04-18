@@ -14,11 +14,13 @@ services:
       - DB_PORT=5432
     depends_on:
       - shop_db
+      - celery
     expose:
       - 8000
     networks:
       - shop_db_network
       - nginx_network
+      - webnet
 #    volumes:
 #      - ./shop:/home/appuser/app
 
@@ -89,12 +91,41 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.9.0-alpine
+    restart: on-failure
+    networks:
+      - webnet
+    expose:
+      - 4369
+      - 5671
+      - 5672
+      - 15672
+      - 25672
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5672"]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+
+  celery:
+    container_name: celery
+    image: celery
+    networks:
+      - webnet
+    healthcheck:
+      test: ["CMD-SHELL", "ps ax", "|" ,"grep -v grep", "|" ,"grep celery",  "||", "exit 1"]
+      interval: 1m
+      timeout: 5s
+      retries: 2
 
 
 networks:
   shop_db_network:
   store_db_network:
   nginx_network:
+  webnet:
 
 volumes:
   shop-db-data:

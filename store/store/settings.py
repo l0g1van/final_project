@@ -20,13 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', 'fdsfsdfs')
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['http://0.0.0.0:8001', 'http://localhost:8001']
 
 # Application definition
 
@@ -78,12 +79,12 @@ WSGI_APPLICATION = 'store.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'store_db',
-        'USER': 'shop_user',
-        'PASSWORD': 'mypassword',
-        'HOST': 'store_db',
-        'PORT': '5432',
+        'ENGINE': os.getenv('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.getenv('POSTGRES_NAME', 'store_db'),
+        'USER': os.getenv('POSTGRES_USER', 'shop_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'mypassword'),
+        'HOST': os.getenv('POSTGRES_HOST', 'store_db'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     },
 }
 

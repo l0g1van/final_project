@@ -5,7 +5,7 @@ from django.db import models
 class Book(models.Model):
     title = models.CharField(max_length=230)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(default='No_image_available.svg.png')
     quantity = models.IntegerField(default=0)
 
     @property

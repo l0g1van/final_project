@@ -1,0 +1,42 @@
+[
+{
+    "model": "shop_app.book",
+    "pk": 1,
+    "fields": {
+        "title": "book1",
+        "price": "12.00",
+        "quantity": 10,
+        "image": "images_Kdg4rkR.jpeg"
+    }
+},
+{
+    "model": "shop_app.book",
+    "pk": 2,
+    "fields": {
+        "title": "book2",
+        "price": "20.00",
+        "quantity": 18,
+        "image": "images1_2pXPIzl.jpeg"
+    }
+},
+{
+    "model": "shop_app.book",
+    "pk": 3,
+    "fields": {
+        "title": "book3",
+        "price": "21.00",
+        "quantity": 17,
+        "image": "single-yellow-book-7618996_fDtAgQ4.jpg"
+    }
+},
+{
+    "model": "shop_app.book",
+    "pk": 4,
+    "fields": {
+        "title": "book4",
+        "price": "213.00",
+        "quantity": 12,
+        "image": "No_image_available.svg.png"
+    }
+}
+]
